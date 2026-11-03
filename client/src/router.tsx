@@ -1,5 +1,6 @@
 import { createBrowserRouter, redirect } from 'react-router-dom'
 import { getProduct, getProducts } from './api/products'
+import ContractsPage from './pages/ContractsPage'
 import ProductLayout from './pages/ProductLayout'
 import ProductListPage from './pages/ProductListPage'
 import ProductDetailPage from './pages/ProductDetailPage'
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
         ErrorBoundary: ProductErrorPage,
         HydrateFallback: () => <p role="status">상품을 불러오는 중입니다…</p>,
       },
+      { path: 'contracts', Component: ContractsPage },
       { path: '*', Component: ProductErrorPage },
     ],
   },

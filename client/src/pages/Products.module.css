@@ -45,3 +45,21 @@
   .detail { padding: 24px; }
   .highlights { grid-template-columns: 1fr; }
 }
+
+.headerActions, .nav { display: flex; align-items: center; gap: 24px; }
+.nav a[aria-current="page"] { color: #245cc4; font-weight: 700; }
+.profile { position: relative; }
+.profileButton { border: 1px solid #dfe6ef; border-radius: 24px; padding: 10px 16px; background: #f0f5ff; color: #172b46; font: inherit; cursor: pointer; }
+.profilePanel { position: absolute; top: calc(100% + 10px); right: 0; z-index: 10; width: 260px; max-width: calc(100vw - 40px); padding: 16px; background: white; border: 1px solid #dfe6ef; border-radius: 12px; box-shadow: 0 8px 24px #172b4620; }
+.profilePanel p { margin: 0 0 12px; font-weight: 700; }
+.profilePanel button { display: block; width: 100%; padding: 12px; border: 0; border-radius: 6px; background: white; color: #172b46; text-align: left; font: inherit; cursor: pointer; }
+.profilePanel button:hover, .profilePanel button[aria-pressed="true"] { background: #edf3ff; }
+.profilePanel span { font-size: 13px; color: #596980; }
+.contractHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+.badge { padding: 4px 10px; border-radius: 20px; background: #edf3ff; color: #245cc4; font-size: 13px; white-space: nowrap; }
+@media (max-width: 720px) {
+  .header { flex-wrap: wrap; }
+  .headerActions { width: 100%; justify-content: space-between; gap: 12px; }
+  .nav { gap: 12px; }
+  .profileButton { font-size: 14px; }
+}
