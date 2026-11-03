@@ -1,0 +1,5 @@
+# IntelliJ IDEA local project settings
+.idea/
+*.iml
+*.iws
+*.ipr
