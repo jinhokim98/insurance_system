@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/api")
 public class InsuranceContractController {
     private final InsuranceContractRepository repository;
 
@@ -17,7 +17,7 @@ public class InsuranceContractController {
         this.repository = repository;
     }
 
-    @GetMapping("/{customerId}/contracts")
+    @GetMapping("/customer/{customerId}/contracts")
     public ResponseEntity<List<InsuranceContract>> getCustomerContracts(
             @PathVariable("customerId") long customerId
     ) {
@@ -27,7 +27,7 @@ public class InsuranceContractController {
         return ResponseEntity.ok(repository.findByCustomerId(customerId));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/contracts/{id}")
     public ResponseEntity<InsuranceContract> getContract(@PathVariable("id") long id) {
         if (id <= 0) {
             return ResponseEntity.badRequest().build();
