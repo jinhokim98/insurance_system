@@ -1,5 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom'
 import type { getContract } from '../api/contracts'
+import ContractPayment from './ContractPayment'
 import styles from './Products.module.css'
 
 const dateTime = (value: string | null) => value ? value.replace('T', ' ').slice(0, 16) : '미정'
@@ -25,6 +26,7 @@ export default function ContractDetailPage() {
         <div><dt>보장 종료</dt><dd>{dateTime(contract.coverageEndsAt)}</dd></div>
       </dl>
       <Link to={`/products/${contract.productId}`}>가입 상품 보기</Link>
+      <ContractPayment key={contract.id} contract={contract} />
     </article>
   </>
 }

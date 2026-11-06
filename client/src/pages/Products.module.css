@@ -71,3 +71,6 @@
 .formFields input:focus-visible, .formFields select:focus-visible { outline: 3px solid #3274df; outline-offset: 2px; }
 .formFields input:disabled, .formFields select:disabled { background: #f0f2f5; }
 .formError { color: #b42318; }
+.payment { margin-top: 32px; padding-top: 24px; border-top: 1px solid #dfe6ef; }
+.payment h2 { margin-top: 0; }
+.paymentSuccess { color: #186444; font-weight: 700; }

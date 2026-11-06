@@ -2,6 +2,19 @@ import axios from 'axios'
 import type { InsuranceContract } from './customers'
 
 const api = axios.create({ baseURL: '/api', timeout: 10000 })
+export interface PremiumPayment {
+  id: number
+  contractId: number
+  amount: number
+  paymentMethod: string
+  paidAt: string
+}
+
+export async function payContract(contractId: number) {
+  const { data } = await api.post<PremiumPayment>(`/contracts/${contractId}/mock-payment`)
+  return data
+}
+
 export interface CreateContractRequest {
   customerId: number
   productId: number
