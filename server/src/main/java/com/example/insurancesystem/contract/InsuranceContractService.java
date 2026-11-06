@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 import org.springframework.web.server.ResponseStatusException;
 
@@ -58,8 +59,22 @@ public class InsuranceContractService {
                         "상품을 찾을 수 없습니다."
                 ));
 
+        // 중복검사
         LocalDateTime startsAt = request.coverageStartDate().atStartOfDay();
         LocalDateTime endsAt = startsAt.plusDays(product.getCoveragePeriodDays());
+        boolean overlapping = insuranceContractRepository.existsOverlapping(
+                request.vehicleNumber().strip(),
+                startsAt,
+                endsAt
+        );
+
+        if (overlapping) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "해당 차량에 보장 기간이 겹치는 계약이 있습니다."
+            );
+        }
+
         NewInsuranceContract contract = new NewInsuranceContract(
                 customer.getId(), product.getId(), request.vehicleNumber().strip(),
                 startsAt, endsAt, product.getCoverageLimit(), product.getPremium(),

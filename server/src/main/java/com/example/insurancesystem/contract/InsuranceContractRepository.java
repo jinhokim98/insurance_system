@@ -3,6 +3,7 @@ package com.example.insurancesystem.contract;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -92,5 +93,30 @@ public class InsuranceContractRepository {
             throw new IllegalStateException("생성된 계약 ID를 확인할 수 없습니다.");
         }
         return generatedId.longValue();
+    }
+
+    public boolean existsOverlapping(
+            String vehicleNumber,
+            LocalDateTime startsAt,
+            LocalDateTime endsAt
+    ) {
+        String sql = """
+                SELECT COUNT(*)
+                FROM insurance_contract
+                WHERE vehicle_number = ?
+                  AND status IN ('PENDING_PAYMENT', 'ACTIVE')
+                  AND coverage_starts_at < ?
+                  AND coverage_ends_at > ?
+                """;
+
+        Long count = jdbcTemplate.queryForObject(
+                sql,
+                Long.class,
+                vehicleNumber,
+                endsAt,
+                startsAt
+        );
+
+        return count != null && count > 0;
     }
 }
