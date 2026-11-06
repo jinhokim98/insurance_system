@@ -31,7 +31,7 @@ function CustomerContracts({ customerId }: { customerId: number }) {
     <p className={styles.count}>전체 {contracts.length}건</p>
     <ul className={styles.grid}>
       {contracts.map(contract => <li key={contract.id} className={styles.card}>
-        <div className={styles.contractHeading}><h2>계약 #{contract.id}</h2><span className={styles.badge}>{contract.status === 'ACTIVE' ? '보장 중' : contract.status === 'PENDING_PAYMENT' ? '결제 대기' : contract.status}</span></div>
+        <div className={styles.contractHeading}><h2><Link to={`/contracts/${contract.id}`}>계약 #{contract.id}</Link></h2><span className={styles.badge}>{contract.status === 'ACTIVE' ? '보장 중' : contract.status === 'PENDING_PAYMENT' ? '납부 대기' : contract.status}</span></div>
         <dl className={styles.facts}>
           <div><dt>차량 번호</dt><dd>{contract.vehicleNumber || '미등록'}</dd></div>
           <div><dt>보장 한도</dt><dd>{contract.coverageLimit.toLocaleString('ko-KR')}원</dd></div>

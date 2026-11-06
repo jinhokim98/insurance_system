@@ -1,8 +1,11 @@
+import { useState } from 'react'
+import EnrollmentForm from './EnrollmentForm'
 import { Link, useLoaderData } from 'react-router-dom'
 import type { getProduct } from '../api/products'
 import styles from './Products.module.css'
 
 export default function ProductDetailPage() {
+  const [enrolling, setEnrolling] = useState(false)
   const product = useLoaderData<typeof getProduct>()
 
   return (
@@ -20,6 +23,7 @@ export default function ProductDetailPage() {
           <h2>상품 설명</h2>
           <p>{product.description || '등록된 상품 설명이 없습니다.'}</p>
         </section>
+        {enrolling ? <EnrollmentForm key={product.id} productId={product.id} /> : <button type="button" className={styles.button} onClick={() => setEnrolling(true)}>가입하기</button>}
       </article>
     </>
   )

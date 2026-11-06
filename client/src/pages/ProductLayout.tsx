@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useNavigation } from 'react-router-dom'
 import { getCustomers, type Customer } from '../api/customers'
 import styles from './Products.module.css'
 
-export interface CustomerSelection { customerId: number; customerName: string }
+export interface CustomerSelection { customerId: number; customerName: string; selectCustomer: (id: number) => void }
 
 export default function ProductLayout() {
   const navigation = useNavigation()
@@ -57,7 +57,7 @@ export default function ProductLayout() {
       </header>
       <main className={styles.main} aria-busy={loading}>
         {loading && <p role="status" className={styles.loading}>불러오는 중입니다…</p>}
-        <Outlet context={{ customerId, customerName } satisfies CustomerSelection} />
+        <Outlet context={{ customerId, customerName, selectCustomer } satisfies CustomerSelection} />
       </main>
     </div>
   )

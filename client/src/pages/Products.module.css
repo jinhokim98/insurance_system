@@ -63,3 +63,11 @@
   .nav { gap: 12px; }
   .profileButton { font-size: 14px; }
 }
+
+.enrollment { margin-top: 32px; padding-top: 24px; border-top: 1px solid #dfe6ef; }
+.formFields { display: grid; gap: 12px; max-width: 480px; margin: 24px 0 0; padding: 0; border: 0; min-width: 0; }
+.formFields label { font-weight: 600; }
+.formFields input, .formFields select { width: 100%; min-width: 0; padding: 12px; border: 1px solid #9aa9bd; border-radius: 8px; color: #172b46; background: white; font: inherit; }
+.formFields input:focus-visible, .formFields select:focus-visible { outline: 3px solid #3274df; outline-offset: 2px; }
+.formFields input:disabled, .formFields select:disabled { background: #f0f2f5; }
+.formError { color: #b42318; }
