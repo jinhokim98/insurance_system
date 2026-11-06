@@ -1,0 +1,1 @@
+INSERT INTO insurance_contract(customer_id, product_id, vehicle_number) VALUES

@@ -2,6 +2,10 @@ package com.example.insurancesystem.contract;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,5 +63,34 @@ public class InsuranceContractRepository {
                 rs.getLong("premium"),
                 ContractStatus.valueOf(rs.getString("status"))
         );
+    }
+
+    public long create(NewInsuranceContract contract) {
+        String sql = """
+                INSERT INTO insurance_contract (
+                    customer_id, product_id, vehicle_number,
+                    coverage_starts_at, coverage_ends_at,
+                    coverage_limit, premium, status
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        int rows = jdbcTemplate.update(connection -> {
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setLong(1, contract.customerId());
+            statement.setLong(2, contract.productId());
+            statement.setString(3, contract.vehicleNumber());
+            statement.setTimestamp(4, Timestamp.valueOf(contract.coverageStartsAt()));
+            statement.setTimestamp(5, Timestamp.valueOf(contract.coverageEndsAt()));
+            statement.setLong(6, contract.coverageLimit());
+            statement.setLong(7, contract.premium());
+            statement.setString(8, contract.status().name());
+            return statement;
+        }, keyHolder);
+
+        Number generatedId = keyHolder.getKey();
+        if (rows != 1 || generatedId == null) {
+            throw new IllegalStateException("생성된 계약 ID를 확인할 수 없습니다.");
+        }
+        return generatedId.longValue();
     }
 }
