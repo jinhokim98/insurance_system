@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
-import { useRevalidator } from 'react-router-dom'
+import { useLocation, useRevalidator } from 'react-router-dom'
 import { payContract, type PremiumPayment } from '../api/contracts'
 import type { InsuranceContract } from '../api/customers'
 import styles from './Products.module.css'
@@ -11,6 +11,15 @@ export default function ContractPayment({ contract }: { contract: InsuranceContr
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
   const submitting = useRef(false)
+  const sectionRef = useRef<HTMLElement>(null)
+  const { hash } = useLocation()
+
+  useEffect(() => {
+    if (hash === '#payment') {
+      sectionRef.current?.scrollIntoView({ block: 'start' })
+      sectionRef.current?.focus({ preventScroll: true })
+    }
+  }, [hash])
 
   async function pay() {
     if (submitting.current || payment || contract.status !== 'PENDING_PAYMENT') return
@@ -33,7 +42,7 @@ export default function ContractPayment({ contract }: { contract: InsuranceContr
     }
   }
 
-  return <section className={styles.payment} aria-labelledby="payment-heading" aria-busy={pending}>
+  return <section id="payment" ref={sectionRef} tabIndex={-1} className={styles.payment} aria-labelledby="payment-heading" aria-busy={pending}>
     <h2 id="payment-heading">보험료 납부</h2>
     {payment ? <div role="status">
       <p className={styles.paymentSuccess}>보험료 납부가 완료되었습니다.</p>

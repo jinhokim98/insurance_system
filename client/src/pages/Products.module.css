@@ -74,3 +74,4 @@
 .payment { margin-top: 32px; padding-top: 24px; border-top: 1px solid #dfe6ef; }
 .payment h2 { margin-top: 0; }
 .paymentSuccess { color: #186444; font-weight: 700; }
+.contractActions { display: grid; gap: 12px; text-align: center; }

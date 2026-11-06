@@ -40,7 +40,12 @@ function CustomerContracts({ customerId }: { customerId: number }) {
           <div><dt>보장 시작</dt><dd>{dateTime(contract.coverageStartsAt)}</dd></div>
           <div><dt>보장 종료</dt><dd>{dateTime(contract.coverageEndsAt)}</dd></div>
         </dl>
-        <Link className={styles.button} to={`/products/${contract.productId}`}>가입 상품 보기 · #{contract.productId}</Link>
+        <div className={styles.contractActions}>
+          <Link className={styles.button} to={contract.status === 'PENDING_PAYMENT' ? `/contracts/${contract.id}#payment` : `/contracts/${contract.id}`}>
+            {contract.status === 'PENDING_PAYMENT' ? '모의 납부하러 가기' : '계약 상세 보기'}
+          </Link>
+          <Link to={`/products/${contract.productId}`}>가입 상품 보기 · #{contract.productId}</Link>
+        </div>
       </li>)}
     </ul>
   </>
