@@ -119,4 +119,14 @@ public class InsuranceContractRepository {
 
         return count != null && count > 0;
     }
+    
+    public int activate(long contractId) {
+        String sql = """
+                        UPDATE insurance_contract
+                        SET status = 'ACTIVE'
+                        WHERE id = ? AND status = 'PENDING_PAYMENT';
+                """;
+
+        return jdbcTemplate.update(sql, contractId);
+    }
 }
