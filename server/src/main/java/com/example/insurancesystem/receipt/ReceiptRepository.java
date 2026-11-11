@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.List;
 
 public interface ReceiptRepository {
+	int assignReceipt(long receiptId, long managerId);
+
 	List<Receipt> findByCustomerId(long customerId);
 
 	List<Receipt> findByContractId(long contractId);

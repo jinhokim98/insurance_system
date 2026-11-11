@@ -21,6 +21,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 		return new Receipt(
 				rs.getLong("id"),
 				rs.getLong("contract_id"),
+				rs.getObject("manager_id", Long.class),
 				rs.getObject("crash_time", LocalDateTime.class),
 				rs.getString("crash_place"),
 				rs.getString("crash_detail"),
@@ -32,7 +33,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public List<Receipt> findByCustomerId(long customerId) {
 		String sql = """
-				SELECT r.id, r.contract_id, r.crash_time, r.crash_place,
+				SELECT r.id, r.contract_id, r.manager_id, r.crash_time, r.crash_place,
 				       r.crash_detail, r.bill_amount, r.receipt_status
 				FROM receipt r
 				JOIN insurance_contract c ON c.id = r.contract_id
@@ -45,7 +46,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public List<Receipt> findByContractId(long contractId) {
 		String sql = """
-				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
+				SELECT id, contract_id, manager_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
 				FROM receipt WHERE contract_id = ? ORDER BY id DESC
 				""";
 		return jdbcTemplate.query(sql, this::mapToObject, contractId);
@@ -54,7 +55,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Optional<Receipt> findById(long id) {
 		String sql = """
-				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
+				SELECT id, contract_id, manager_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
 				FROM receipt WHERE id = ?
 				""";
 		return jdbcTemplate.query(sql, this::mapToObject, id).stream().findFirst();
@@ -83,7 +84,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 			throw new IllegalStateException("생성된 접수 id를 확인할 수 없습니다.");
 		}
 
-		return new Receipt(generatedId.longValue(), request.contractId(), request.crashTime(), request.crashPlace(), request.crashDetail(), request.billAmount(), ReceiptStatus.RECEIVED);
+		return new Receipt(generatedId.longValue(), request.contractId(), null, request.crashTime(), request.crashPlace(), request.crashDetail(), request.billAmount(), ReceiptStatus.RECEIVED);
 	}
 
 	@Override
@@ -106,10 +107,21 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public List<Receipt> findByReceiptStatus(ReceiptStatus receiptStatus) {
 		String sql = """
-				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
+				SELECT id, contract_id, manager_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
 				FROM receipt WHERE receipt_status = ? ORDER BY id DESC
 				""";
 
 		return jdbcTemplate.query(sql, this::mapToObject, receiptStatus.name());
+	}
+
+	@Override
+	public int assignReceipt(long receiptId, long managerId) {
+		String sql = """
+				UPDATE receipt
+                SET manager_id = ?, receipt_status = 'REVIEW_START'
+                WHERE id = ? AND manager_id IS NULL AND receipt_status = 'RECEIVED'
+				""";
+
+		return jdbcTemplate.update(sql, managerId, receiptId);
 	}
 }

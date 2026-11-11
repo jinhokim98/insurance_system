@@ -11,4 +11,10 @@ public interface ReceiptService {
 	Optional<Receipt> findById(long receiptId);
 
 	List<Receipt> findByCustomerId(long customerId);
+
+	void assignManager(long receiptId, long managerId);
+
+	void acceptReceipt(long receiptId, long managerId);
+
+	void deniedReceipt(long receiptId, long managerId);
 }

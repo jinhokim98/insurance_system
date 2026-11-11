@@ -3,8 +3,11 @@ package com.example.insurancesystem.receipt;
 import com.example.insurancesystem.contract.ContractStatus;
 import com.example.insurancesystem.contract.InsuranceContract;
 import com.example.insurancesystem.contract.InsuranceContractRepository;
+import com.example.insurancesystem.manager.Manager;
+import com.example.insurancesystem.manager.ManagerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -16,10 +19,12 @@ import java.util.Optional;
 public class ReceiptServiceImpl implements ReceiptService {
 	private final ReceiptRepository receiptRepository;
 	private final InsuranceContractRepository insuranceContractRepository;
+	private final ManagerRepository managerRepository;
 
-	public ReceiptServiceImpl(ReceiptRepository receiptRepository, InsuranceContractRepository insuranceContractRepository) {
+	public ReceiptServiceImpl(ReceiptRepository receiptRepository, InsuranceContractRepository insuranceContractRepository, ManagerRepository managerRepository) {
 		this.receiptRepository = receiptRepository;
 		this.insuranceContractRepository = insuranceContractRepository;
+		this.managerRepository = managerRepository;
 	}
 
 	@Override
@@ -98,5 +103,49 @@ public class ReceiptServiceImpl implements ReceiptService {
 		return receiptRepository.findByCustomerId(customerId);
 	}
 
+	private Manager validateManager(Long managerId) {
+		return managerRepository
+				.findById(managerId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "매니저가 없습니다."));
+	}
+
+	private Receipt validateReceipt(Long receiptId) {
+		return receiptRepository
+				.findById(receiptId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "접수가 없습니다."));
+	}
+
+	@Override
+	@Transactional
+	public void assignManager(long receiptId, long managerId) {
+		if (receiptId <= 0 || managerId <= 0) {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,
+					"ID가 유효하지 않습니다."
+			);
+		}
+
+		Manager manager = validateManager(managerId);
+		Receipt receipt = validateReceipt(receiptId);
+		try {
+            receipt.assignManager(manager.getId());
+        } catch (IllegalStateException exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, exception.getMessage());
+        }
+
+        if (receiptRepository.assignReceipt(receipt.getId(), receipt.getManagerId()) != 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "다른 요청이 접수 상태 또는 담당자를 변경했습니다.");
+        }
+	}
+
+	@Override
+	public void acceptReceipt(long receiptId, long managerId) {
+		throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "심사 승인은 아직 구현하지 않았습니다.");
+	}
+
+	@Override
+	public void deniedReceipt(long receiptId, long managerId) {
+		throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "심사 거절은 아직 구현하지 않았습니다.");
+	}
 
 }
