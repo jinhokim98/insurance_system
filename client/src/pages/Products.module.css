@@ -75,3 +75,7 @@
 .payment h2 { margin-top: 0; }
 .paymentSuccess { color: #186444; font-weight: 700; }
 .contractActions { display: grid; gap: 12px; text-align: center; }
+
+.formFields textarea { width: 100%; min-width: 0; padding: 12px; border: 1px solid #9aa9bd; border-radius: 8px; color: #172b46; background: white; font: inherit; resize: vertical; }
+.formFields textarea:focus-visible { outline: 3px solid #3274df; outline-offset: 2px; }
+.formFields textarea:disabled { background: #f0f2f5; }

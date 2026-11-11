@@ -1,3 +1,8 @@
+import { getReceipt } from './api/receipts'
+import ReceiptListPage from './pages/ReceiptListPage'
+import ReceiptDetailPage from './pages/ReceiptDetailPage'
+import ReceiptCreatePage from './pages/ReceiptCreatePage'
+import ReceiptErrorPage from './pages/ReceiptErrorPage'
 import { createBrowserRouter, redirect } from 'react-router-dom'
 import { getProduct, getProducts } from './api/products'
 import { getContract } from './api/contracts'
@@ -47,6 +52,18 @@ export const router = createBrowserRouter([
         HydrateFallback: () => <p role="status">계약을 불러오는 중입니다…</p>,
       },
       { path: 'contracts', Component: ContractsPage },
+      { path: 'receipts', Component: ReceiptListPage },
+      { path: 'receipts/new', Component: ReceiptCreatePage },
+      {
+        path: 'receipts/:receiptId', Component: ReceiptDetailPage,
+        loader: ({ params, request }) => {
+          const id = params.receiptId ?? ''
+          if (!/^[1-9]\d*$/.test(id)) throw new Response('접수를 찾을 수 없습니다.', { status: 404 })
+          return getReceipt(id, request.signal)
+        },
+        ErrorBoundary: ReceiptErrorPage,
+        HydrateFallback: () => <p role="status">접수를 불러오는 중입니다…</p>,
+      },
       { path: '*', Component: ProductErrorPage },
     ],
   },

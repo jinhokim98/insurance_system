@@ -42,6 +42,7 @@ export default function ProductLayout() {
           <nav aria-label="주 메뉴" className={styles.nav}>
             <NavLink to="/products">상품 목록</NavLink>
             <NavLink to="/contracts">내 계약</NavLink>
+            <NavLink to="/receipts">내 접수</NavLink>
           </nav>
           <div className={styles.profile} onKeyDown={event => { if (event.key === 'Escape') setOpen(false) }} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }}>
             <button type="button" className={styles.profileButton} aria-expanded={open} aria-controls="profile-panel" onClick={() => setOpen(!open)}>프로필 · {customerName} ▾</button>
