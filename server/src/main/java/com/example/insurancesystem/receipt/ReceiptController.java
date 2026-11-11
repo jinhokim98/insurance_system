@@ -1,5 +1,7 @@
 package com.example.insurancesystem.receipt;
 
+import com.example.insurancesystem.manager.Manager;
+import com.example.insurancesystem.manager.ManagerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,14 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/receipt")
 public class ReceiptController {
 	private final ReceiptService receiptService;
+	private final ManagerRepository managerRepository;
 
-	public ReceiptController(ReceiptService receiptService) {
+	public ReceiptController(ReceiptService receiptService, ManagerRepository managerRepository) {
 		this.receiptService = receiptService;
+		this.managerRepository = managerRepository;
 	}
 
 	@GetMapping("/{receiptId}")
@@ -43,4 +48,13 @@ public class ReceiptController {
 	) {
 		return ResponseEntity.ok(receiptService.findByReceiptStatus(receiptStatus));
 	}
+
+	@PostMapping("/{receiptId}/assign-receipt")
+	public ResponseEntity<Long> assignManager(@PathVariable Long receiptId) {
+		Optional<Manager> manager = managerRepository.findSpareMember();
+		long managerId = manager.map(Manager::getId).orElse(1L);
+		receiptService.assignManager(receiptId, managerId);
+		return ResponseEntity.ok().body(managerId);
+	}
+
 }

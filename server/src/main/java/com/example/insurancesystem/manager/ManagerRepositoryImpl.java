@@ -50,4 +50,29 @@ public class ManagerRepositoryImpl implements ManagerRepository {
 
 		return new Manager(generatedId.longValue(), department);
 	}
+
+	@Override
+	public Optional<Manager> findSpareMember() {
+		// 매니저를 어떻게 관리해야 담당한게 적은 유저를 알 수 있을까?
+		// 사내 접수 내역 조회 -> 접수된 것 안에서 매니저 별로 담당 수를 집계 후 적은 순으로 정렬하여 내보내줌.
+		String sql = """
+				SELECT m.id, m.department
+				FROM manager m
+				LEFT JOIN receipt r
+					ON r.manager_id = m.id
+					AND r.receipt_status = 'REVIEW_START'
+				GROUP BY m.id, m.department
+				ORDER BY COUNT(r.id) ASC, m.id ASC
+				LIMIT 1
+				""";
+
+		return jdbcTemplate.query(sql,
+				(rs, rowNum) -> new Manager(
+						rs.getLong("id"),
+						rs.getString("department")
+				)
+		).stream().findFirst();
+	}
+
+
 }

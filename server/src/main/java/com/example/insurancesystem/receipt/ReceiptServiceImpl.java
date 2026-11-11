@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -102,7 +103,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		}
 		return receiptRepository.findByCustomerId(customerId);
 	}
-
+	
 	private Manager validateManager(Long managerId) {
 		return managerRepository
 				.findById(managerId)
@@ -128,14 +129,14 @@ public class ReceiptServiceImpl implements ReceiptService {
 		Manager manager = validateManager(managerId);
 		Receipt receipt = validateReceipt(receiptId);
 		try {
-            receipt.assignManager(manager.getId());
-        } catch (IllegalStateException exception) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, exception.getMessage());
-        }
+			receipt.assignManager(manager.getId());
+		} catch (IllegalStateException exception) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, exception.getMessage());
+		}
 
-        if (receiptRepository.assignReceipt(receipt.getId(), receipt.getManagerId()) != 1) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "다른 요청이 접수 상태 또는 담당자를 변경했습니다.");
-        }
+		if (receiptRepository.assignReceipt(receipt.getId(), receipt.getManagerId()) != 1) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "다른 요청이 접수 상태 또는 담당자를 변경했습니다.");
+		}
 	}
 
 	@Override
@@ -147,5 +148,6 @@ public class ReceiptServiceImpl implements ReceiptService {
 	public void deniedReceipt(long receiptId, long managerId) {
 		throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "심사 거절은 아직 구현하지 않았습니다.");
 	}
+
 
 }
