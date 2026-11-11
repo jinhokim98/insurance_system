@@ -14,4 +14,5 @@ public class Receipt {
 	private String crashPlace;
 	private String crashDetail;
 	private Long billAmount;
+	private ReceiptStatus receiptStatus;
 }

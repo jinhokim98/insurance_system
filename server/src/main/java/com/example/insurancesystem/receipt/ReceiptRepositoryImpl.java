@@ -24,7 +24,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 				rs.getObject("crash_time", LocalDateTime.class),
 				rs.getString("crash_place"),
 				rs.getString("crash_detail"),
-				rs.getObject("bill_amount", Long.class)
+				rs.getObject("bill_amount", Long.class),
+				ReceiptStatus.valueOf(rs.getString("receipt_status"))
 		);
 	}
 
@@ -32,7 +33,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	public List<Receipt> findByCustomerId(long customerId) {
 		String sql = """
 				SELECT r.id, r.contract_id, r.crash_time, r.crash_place,
-				       r.crash_detail, r.bill_amount
+				       r.crash_detail, r.bill_amount, r.receipt_status
 				FROM receipt r
 				JOIN insurance_contract c ON c.id = r.contract_id
 				WHERE c.customer_id = ?
@@ -44,7 +45,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public List<Receipt> findByContractId(long contractId) {
 		String sql = """
-				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount
+				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
 				FROM receipt WHERE contract_id = ? ORDER BY id DESC
 				""";
 		return jdbcTemplate.query(sql, this::mapToObject, contractId);
@@ -53,7 +54,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Optional<Receipt> findById(long id) {
 		String sql = """
-				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount
+				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
 				FROM receipt WHERE id = ?
 				""";
 		return jdbcTemplate.query(sql, this::mapToObject, id).stream().findFirst();
@@ -82,7 +83,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 			throw new IllegalStateException("생성된 접수 id를 확인할 수 없습니다.");
 		}
 
-		return new Receipt(generatedId.longValue(), request.contractId(), request.crashTime(), request.crashPlace(), request.crashDetail(), request.billAmount());
+		return new Receipt(generatedId.longValue(), request.contractId(), request.crashTime(), request.crashPlace(), request.crashDetail(), request.billAmount(), ReceiptStatus.RECEIVED);
 	}
 
 	@Override
@@ -100,5 +101,15 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public int deleteReceipt(long id) {
 		return jdbcTemplate.update("DELETE FROM receipt WHERE id = ?", id);
+	}
+
+	@Override
+	public List<Receipt> findByReceiptStatus(ReceiptStatus receiptStatus) {
+		String sql = """
+				SELECT id, contract_id, crash_time, crash_place, crash_detail, bill_amount, receipt_status
+				FROM receipt WHERE receipt_status = ? ORDER BY id DESC
+				""";
+
+		return jdbcTemplate.query(sql, this::mapToObject, receiptStatus.name());
 	}
 }

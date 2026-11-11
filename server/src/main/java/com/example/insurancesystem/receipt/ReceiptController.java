@@ -36,4 +36,11 @@ public class ReceiptController {
 		Receipt receipt = receiptService.createReceipt(request);
 		return ResponseEntity.created(URI.create("/api/receipt/" + receipt.getId())).body(receipt);
 	}
+
+	@GetMapping("/status")
+	public ResponseEntity<List<Receipt>> getReceiptsByReceiptStatus(
+			@RequestParam("receiptStatus") ReceiptStatus receiptStatus
+	) {
+		return ResponseEntity.ok(receiptService.findByReceiptStatus(receiptStatus));
+	}
 }

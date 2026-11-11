@@ -23,6 +23,14 @@ public class ReceiptServiceImpl implements ReceiptService {
 	}
 
 	@Override
+	public List<Receipt> findByReceiptStatus(ReceiptStatus receiptStatus) {
+		if (receiptStatus == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "접수 상태를 선택해 주세요.");
+		}
+		return receiptRepository.findByReceiptStatus(receiptStatus);
+	}
+
+	@Override
 	public Receipt createReceipt(ReceiptRequest request) {
 		// 입력값 검증
 		if (request.customerId() <= 0 || request.contractId() <= 0) {

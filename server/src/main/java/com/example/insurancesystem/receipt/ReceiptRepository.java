@@ -15,4 +15,6 @@ public interface ReceiptRepository {
 	int updateReceipt(long id, ReceiptRequest request);
 
 	int deleteReceipt(long id);
+
+	List<Receipt> findByReceiptStatus(ReceiptStatus receiptStatus);
 }

@@ -11,3 +11,11 @@ CREATE TABLE receipt (
    FOREIGN KEY (contract_id) REFERENCES insurance_contract(id) ON DELETE RESTRICT,
    CONSTRAINT chk_receipt_bill_amount CHECK (bill_amount IS NULL OR bill_amount >= 0)
 );
+
+ALTER TABLE receipt
+ADD COLUMN receipt_status VARCHAR(20)
+NOT NULL DEFAULT 'RECEIVED';
+
+ALTER TABLE receipt
+ADD CONSTRAINT chk_receipt_status
+CHECK (receipt_status IN ('RECEIVED', 'REVIEW_START', 'REVIEW_COMPLETED', 'PAYMENT_COMPLETED'));
